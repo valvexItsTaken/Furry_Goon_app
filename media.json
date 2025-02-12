@@ -1,14 +1,27 @@
 [
     {
         "name": "Protogen 1v1",
-        "url": "https://static1.e621.net/data/sample/17/e5/17e578f1ba60d403954d4afc1f7ebe4e_720p.webm"
+        "url": "https://static1.e621.net/data/sample/17/e5/17e578f1ba60d403954d4afc1f7ebe4e_720p.webm",
+        "image": ""
     },
     {
         "name": "Long protogen video 1",
-        "url": "https://static1.e621.net/data/43/af/43afb263c8ced2901ad66d071fd83ff1.webm"
+        "url": "https://static1.e621.net/data/43/af/43afb263c8ced2901ad66d071fd83ff1.webm",
+        "image": ""
     },
     {
-        "name": "Sample Media 3",
-        "url": "http://example.com/media3.mp4"
+        "name": "Long protogen video 2",
+        "url": "https://static1.e621.net/data/99/ef/99ef1ff2cbb7f52443379b1a6ab22573.webm",
+        "image": ""
+    },
+    {
+        "name": "Long protogen video 3",
+        "url": "https://static1.e621.net/data/3d/b1/3db1e5243946bb5dfb7d17dc8c5449fb.webm",
+        "image": ""
+    },
+    {
+        "name": "Protogen Fun",
+        "url": "https://static1.e621.net/data/a3/14/a314b0682070e4d9aeb88e715e087f58.webm",
+        "image": ""
     }
 ]

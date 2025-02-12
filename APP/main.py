@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from tkinter import filedialog
-from PIL import Image, ImageTk
+from tkinter import simpledialog
 import vlc
 import json
 import requests
@@ -13,6 +12,7 @@ class MediaPlayerApp:
         self.root = root
         self.root.title("FURRY GOON APP")
         self.root.geometry("1000x700")
+        self.root.iconbitmap("ico.ico")
         self.setup_ui()
         self.instance = vlc.Instance()
         self.player = self.instance.media_player_new()
@@ -24,19 +24,19 @@ class MediaPlayerApp:
         self.apply_dark_mode()
 
         self.video_frame = ttk.Frame(self.root)
-        self.video_frame.pack(pady=10, fill=tk.BOTH, expand=True)
+        self.video_frame.pack(pady=1, fill=tk.BOTH, expand=True)
 
         self.preview_label = ttk.Label(self.video_frame)
-        self.preview_label.pack(pady=10)
+        self.preview_label.pack(pady=300)
 
         self.controls_frame = ttk.Frame(self.root)
-        self.controls_frame.pack(pady=10, fill=tk.X)
+        self.controls_frame.pack(pady=1, fill=tk.X)
 
         self.play_button = ttk.Button(self.controls_frame, text="Play", command=self.play_media)
         self.play_button.pack(side=tk.LEFT, padx=5)
 
-        self.stop_button = ttk.Button(self.controls_frame, text="Stop", command=self.stop_media)
-        self.stop_button.pack(side=tk.LEFT, padx=5)
+        self.pause_button = ttk.Button(self.controls_frame, text="Pause", command=self.pause_media)
+        self.pause_button.pack(side=tk.LEFT, padx=5)
 
         self.prev_button = ttk.Button(self.controls_frame, text="Previous", command=self.prev_media)
         self.prev_button.pack(side=tk.LEFT, padx=5)
@@ -48,7 +48,7 @@ class MediaPlayerApp:
         self.add_button.pack(side=tk.LEFT, padx=5)
 
         self.listbox = tk.Listbox(self.root, bg="#555555", fg="#ffffff", selectbackground="#444444", selectforeground="#ffffff")
-        self.listbox.pack(pady=10, fill=tk.BOTH, expand=True)
+        self.listbox.pack(pady=5, fill=tk.BOTH, expand=True)
         self.listbox.bind('<<ListboxSelect>>', self.show_preview)
 
     def load_media_list(self):
@@ -96,8 +96,17 @@ class MediaPlayerApp:
         else:
             messagebox.showerror("Error", "No media URLs found")
 
+    def pause_media(self):
+        if self.player.is_playing():
+            self.player.pause()
+            self.pause_button.config(text="Continue")
+        else:
+            self.player.play()
+            self.pause_button.config(text="Pause")
+
     def stop_media(self):
         self.player.stop()
+        self.pause_button.config(text="Pause")
 
     def prev_media(self):
         if self.media_list:
@@ -116,11 +125,11 @@ class MediaPlayerApp:
             self.play_media()
 
     def add_media(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Media files", "*.mp4;*.webm;*.mkv;*.avi")])
-        if file_path:
-            name = filedialog.askstring("Media Name", "Enter a name for the media:")
+        url = simpledialog.askstring("Media URL", "Enter the URL for the media:")
+        if url:
+            name = simpledialog.askstring("Media Name", "Enter a name for the media:")
             if name:
-                new_media = {"name": name, "url": file_path, "image": ""}
+                new_media = {"name": name, "url": url, "image": ""}
                 self.media_list.append(new_media)
                 self.save_media_list()
                 self.populate_listbox()
