@@ -12,12 +12,14 @@ class MediaPlayerApp:
         self.root = root
         self.root.title("FURRY GOON APP")
         self.root.geometry("1000x700")
+        self.root.iconbitmap("ico.ico")
         self.setup_ui()
         self.instance = vlc.Instance()
         self.player = self.instance.media_player_new()
         self.media_list = self.load_media_list()
         self.current_index = 0
         self.populate_listbox()
+        self.player.event_manager().event_attach(vlc.EventType.MediaPlayerEndReached, self.on_media_end)
 
     def setup_ui(self):
         self.apply_dark_mode()
@@ -36,6 +38,9 @@ class MediaPlayerApp:
 
         self.pause_button = ttk.Button(self.controls_frame, text="Pause", command=self.pause_media)
         self.pause_button.pack(side=tk.LEFT, padx=5)
+
+        self.stop_button = ttk.Button(self.controls_frame, text="Stop", command=self.stop_media)
+        self.stop_button.pack(side=tk.LEFT, padx=5)
 
         self.prev_button = ttk.Button(self.controls_frame, text="Previous", command=self.prev_media)
         self.prev_button.pack(side=tk.LEFT, padx=5)
@@ -132,6 +137,10 @@ class MediaPlayerApp:
                 self.media_list.append(new_media)
                 self.save_media_list()
                 self.populate_listbox()
+
+    def on_media_end(self, event):
+        self.player.stop()
+        self.player.play()
 
     def apply_dark_mode(self):
         style = ttk.Style()

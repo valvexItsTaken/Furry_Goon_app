@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FURRY E621</title>
+    <style>
+        body {
+            background-color: #333333;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        .video-container {
+            width: 100%;
+            height: 600px; /* Increased height */
+            background-color: #000000;
+            margin-bottom: 20px;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .controls button {
+            background-color: #444444;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .controls button:hover {
+            background-color: #555555;
+        }
+        .media-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .media-list li {
+            background-color: #555555;
+            padding: 10px;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .media-list li:hover {
+            background-color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="video-container">
+            <video id="videoPlayer" controls></video>
+        </div>
+        <div class="controls">
+            <button onclick="prevMedia()">Previous</button>
+            <button onclick="playPauseMedia()">Play/Pause</button>
+            <button onclick="stopMedia()">Stop</button>
+            <button onclick="nextMedia()">Next</button>
+            <button onclick="addMedia()">Add Media</button>
+        </div>
+        <ul class="media-list" id="mediaList"></ul>
+    </div>
+    <script>
+        let mediaList = [];
+        let currentIndex = 0;
+        const videoPlayer = document.getElementById('videoPlayer');
+        const mediaListElement = document.getElementById('mediaList');
+
+        function loadMediaList() {
+            fetch('/media_list')
+                .then(response => response.json())
+                .then(data => {
+                    mediaList = data;
+                    populateMediaList();
+                });
+        }
+
+        function populateMediaList() {
+            mediaListElement.innerHTML = '';
+            mediaList.forEach((media, index) => {
+                const li = document.createElement('li');
+                li.textContent = media.name;
+                li.onclick = () => {
+                    currentIndex = index;
+                    playMedia();
+                };
+                mediaListElement.appendChild(li);
+            });
+        }
+
+        function playMedia() {
+            if (mediaList.length > 0) {
+                const media = mediaList[currentIndex];
+                videoPlayer.src = media.url;
+                videoPlayer.play();
+            }
+        }
+
+        function playPauseMedia() {
+            if (videoPlayer.paused) {
+                videoPlayer.play();
+            } else {
+                videoPlayer.pause();
+            }
+        }
+
+        function stopMedia() {
+            videoPlayer.pause();
+            videoPlayer.currentTime = 0;
+        }
+
+        function prevMedia() {
+            if (mediaList.length > 0) {
+                currentIndex = (currentIndex - 1 + mediaList.length) % mediaList.length;
+                playMedia();
+            }
+        }
+
+        function nextMedia() {
+            if (mediaList.length > 0) {
+                currentIndex = (currentIndex + 1) % mediaList.length;
+                playMedia();
+            }
+        }
+
+        function addMedia() {
+            const url = prompt("Enter the URL for the media:");
+            if (url) {
+                const name = prompt("Enter a name for the media:");
+                if (name) {
+                    const newMedia = { name, url, image: "" };
+                    fetch('/add_media', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newMedia)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            mediaList.push(newMedia);
+                            populateMediaList();
+                        }
+                    });
+                }
+            }
+        }
+
+        window.onload = loadMediaList;
+    </script>
+</body>
+</html>
