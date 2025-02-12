@@ -12,7 +12,6 @@ class MediaPlayerApp:
         self.root = root
         self.root.title("FURRY GOON APP")
         self.root.geometry("1000x700")
-        self.root.iconbitmap("ico.ico")
         self.setup_ui()
         self.instance = vlc.Instance()
         self.player = self.instance.media_player_new()
